@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Quiz App</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body { background: #f3f4f6; font-family: Arial, sans-serif; }
+        .quiz-card { transition: transform 0.5s ease; }
+        .quiz-card:hover { transform: scale(1.02); }
+        .option:hover { background-color: #e5e7eb; cursor: pointer; }
+        .pagination button { transition: background 0.3s; }
+        .pagination button:hover { background: #4b5563; color: white; }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen">
+    <div class="w-full max-w-xl p-5 bg-white rounded-2xl shadow-lg quiz-card">
+        <h1 class="text-2xl font-bold mb-5 text-center">JavaScript Quiz</h1>
+        <div id="quiz-container">
+            <!-- Questions will be injected here -->
+        </div>
+        <div class="flex justify-between items-center mt-5">
+            <div class="pagination space-x-2">
+                <button onclick="prevQuestion()" class="py-1 px-3 rounded bg-gray-300">Prev</button>
+                <button onclick="nextQuestion()" class="py-1 px-3 rounded bg-gray-300">Next</button>
+            </div>
+            <div>
+                <span id="timer" class="text-gray-600">Time: 0s</span>
+            </div>
+            <button onclick="submitQuiz()" class="py-1 px-4 rounded bg-green-500 text-white">Submit</button>
+        </div>
+        <div id="score" class="mt-5 text-center text-xl font-bold text-green-600"></div>
+    </div>
+    <script>
+        const questions = [
+            { q: "What is the output of '2' + 2 in JavaScript?", options: ["22", "4", "NaN", "Error"], answer: 0 },
+            { q: "Which is a JavaScript framework?", options: ["Laravel", "Django", "React", "Ruby on Rails"], answer: 2 },
+            { q: "Which keyword is used to define a variable in ES6?", options: ["var", "let", "const", "all of these"], answer: 3 },
+            { q: "What does DOM stand for?", options: ["Document Object Model", "Data Object Model", "Document Oriented Module", "None"], answer: 0 }
+        ];
+        let currentQuestion = 0;
+        let score = 0;
+        let time = 0;
+
+        const loadQuestion = () => {
+            const q = questions[currentQuestion];
+            const quizContainer = document.getElementById("quiz-container");
+            quizContainer.innerHTML = `
+                <h2 class="text-xl font-semibold mb-4">${q.q}</h2>
+                <ul>
+                    ${q.options.map((opt, index) => `<li class="option p-2 rounded mb-2 border cursor-pointer" onclick="selectOption(${index})">${opt}</li>`).join("")}
+                </ul>`;
+        }
+
+        const selectOption = (index) => {
+            questions[currentQuestion].selected = index;
+        }
+
+        const nextQuestion = () => {
+            if (currentQuestion < questions.length - 1) currentQuestion++;
+            loadQuestion();
+        }
+
+        const prevQuestion = () => {
+            if (currentQuestion > 0) currentQuestion--;
+            loadQuestion();
+        }
+
+        const submitQuiz = () => {
+            questions.forEach(q => { if (q.selected === q.answer) score++; });
+            document.getElementById("score").innerText = `Your Score: ${score}/${questions.length}`;
+        }
+
+        setInterval(() => {
+            time++;
+            document.getElementById("timer").innerText = `Time: ${time}s`;
+        }, 1000);
+
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
